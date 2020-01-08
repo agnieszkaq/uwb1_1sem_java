@@ -44,10 +44,10 @@ public class GraphicProgram extends JFrame {
 	private int licznik = 1;
 	private JButton grayTwo, grayOne, filterOK;
 	private BufferedImage actualImage, originalImage;
-	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrastt;
+	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrast;
 	private JFileChooser chooser, saveChooser;
 	private JScrollPane scrollImagePane;
-	private JSlider zoomSlider, brightnessSlider, contrasttSlider;
+	private JSlider zoomSlider, brightnessSlider, contrastSlider;
 	private JTextField[] numberOperation = new JTextField[4];
 	private JPanel contentPane, configurationPane, imagePane;
 	private JMenuBar menuBar;
@@ -203,10 +203,10 @@ public class GraphicProgram extends JFrame {
 		brightness.setBounds(25, 145, 250, 40);
 		configurationPane.add(brightness);
 
-		contrastt = new JLabel("contrastt: 100%");
-		contrastt.setFont(new Font("Arial", Font.PLAIN, 12));
-		contrastt.setBounds(25, 220, 250, 40);
-		configurationPane.add(contrastt);
+		contrast = new JLabel("contrast: 100%");
+		contrast.setFont(new Font("Arial", Font.PLAIN, 12));
+		contrast.setBounds(25, 220, 250, 40);
+		configurationPane.add(contrast);
 
 		brightnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
 		brightnessSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -221,18 +221,18 @@ public class GraphicProgram extends JFrame {
 		brightnessSlider.addMouseListener(mouseListener);
 		configurationPane.add(brightnessSlider);
 
-		contrasttSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
-		contrasttSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		contrasttSlider.setBackground(Color.WHITE);
-		contrasttSlider.setValue(100);
-		contrasttSlider.setBounds(25, 255, 250, 40);
-		contrasttSlider.setMinorTickSpacing(25);
-		contrasttSlider.setMajorTickSpacing(100);
-		contrasttSlider.setPaintTicks(true);
-		contrasttSlider.setPaintLabels(true);
-		contrasttSlider.addMouseMotionListener(mouseMotionListener);
-		contrasttSlider.addMouseListener(mouseListener);
-		configurationPane.add(contrasttSlider);
+		contrastSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
+		contrastSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		contrastSlider.setBackground(Color.WHITE);
+		contrastSlider.setValue(100);
+		contrastSlider.setBounds(25, 255, 250, 40);
+		contrastSlider.setMinorTickSpacing(25);
+		contrastSlider.setMajorTickSpacing(100);
+		contrastSlider.setPaintTicks(true);
+		contrastSlider.setPaintLabels(true);
+		contrastSlider.addMouseMotionListener(mouseMotionListener);
+		contrastSlider.addMouseListener(mouseListener);
+		configurationPane.add(contrastSlider);
 
 		grayOne = new JButton("szarość- sposób 1");
 		grayOne.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -498,11 +498,11 @@ public class GraphicProgram extends JFrame {
 			imageHelper.updateImage(LUT);
 		}
 
-		public void contrastt(double contrasttValue) {
+		public void contrast(double contrastValue) {
 			int[] LUT = new int[256];
 
 			for (int i = 0; i < 256; i++) {
-				double newValue = (contrasttValue) * (i - (255 / 2) + 255 / 2);
+				double newValue = (contrastValue) * (i - (255 / 2) + 255 / 2);
 				if (newValue > 255)
 					LUT[i] = 255;
 				else if (newValue < 0)
@@ -633,7 +633,7 @@ public class GraphicProgram extends JFrame {
 				imageHelper.reset();
 				zoomSlider.setValue(100);
 				brightnessSlider.setValue(100);
-				contrasttSlider.setValue(100);
+				contrastSlider.setValue(100);
 				imagePane.repaint();
 			} else if (e.getSource() == miMedian3) {
 				filter.medianFilter(3);
@@ -705,8 +705,8 @@ public class GraphicProgram extends JFrame {
 				actualImageScale.setText("Rozmiar obrazu: " + zoomSlider.getValue() + "%");
 			} else if (e.getSource() == brightnessSlider) {
 				brightness.setText("Jasność: " + brightnessSlider.getValue() + "%");
-			} else if (e.getSource() == contrasttSlider) {
-				contrastt.setText("contrastt: " + contrasttSlider.getValue() + "%");
+			} else if (e.getSource() == contrastSlider) {
+				contrast.setText("Kontrast: " + contrastSlider.getValue() + "%");
 			}
 		}
 
@@ -735,8 +735,8 @@ public class GraphicProgram extends JFrame {
 				actualImageScale.setText("Rozmiar obrazu: 100% ");
 				brightnessSlider.setValue(100);
 				brightness.setText("Jasność: 100% ");
-				contrasttSlider.setValue(100);
-				contrastt.setText("contrastt: 100% ");
+				contrastSlider.setValue(100);
+				contrast.setText("Kontrast: 100% ");
 				imagePane.repaint();
 
 			}
@@ -771,8 +771,8 @@ public class GraphicProgram extends JFrame {
 			} else if (e.getSource() == brightnessSlider && actualImage != null) {
 				filter.brightness((double) brightnessSlider.getValue() / 100);
 				imagePane.repaint();
-			} else if (e.getSource() == contrasttSlider && actualImage != null) {
-				filter.contrastt((double) contrasttSlider.getValue() / 100);
+			} else if (e.getSource() == contrastSlider && actualImage != null) {
+				filter.contrast((double) contrastSlider.getValue() / 100);
 				imagePane.repaint();
 			}
 		}
