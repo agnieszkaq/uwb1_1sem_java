@@ -44,11 +44,11 @@ public class GraphicProgram extends JFrame {
 	private int licznik = 1;
 	private JButton grayTwo, grayOne, filterOK;
 	private BufferedImage actualImage, originalImage;
-	private JLabel colorRGB, colorPreview, actualImageScale, brightness, kontrast;
+	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrastt;
 	private JFileChooser chooser, saveChooser;
 	private JScrollPane scrollImagePane;
-	private JSlider zoomSlider, brightnessSlider, kontrastSlider;
-	private JTextField[] dzialania = new JTextField[4];
+	private JSlider zoomSlider, brightnessSlider, contrasttSlider;
+	private JTextField[] numberOperation = new JTextField[4];
 	private JPanel contentPane, configurationPane, imagePane;
 	private JMenuBar menuBar;
 	private JMenu mPlik, mObraz, mOkno;
@@ -57,7 +57,7 @@ public class GraphicProgram extends JFrame {
 	private JComboBox<Object> filterType;
 
 	int id = 0, positionX, positionY, oHeightCheck = 0, oWidthCheck = 0, circleRCheck, lineXCheck = 0, lineYCheck = 0,
-			doAddidngCheck = 0, doSubtractionCheck = 0, mnozonaCheck = 1, dzielonaCheck = 1, iWidth, iHeight;
+			doAddidngCheck = 0, doSubtractionCheck = 0, multipledCheck = 1, dividedCheck = 1, iWidth, iHeight;
 	private Robot robot;
 
 	public GraphicProgram() {
@@ -203,10 +203,10 @@ public class GraphicProgram extends JFrame {
 		brightness.setBounds(25, 145, 250, 40);
 		configurationPane.add(brightness);
 
-		kontrast = new JLabel("Kontrast: 100%");
-		kontrast.setFont(new Font("Arial", Font.PLAIN, 12));
-		kontrast.setBounds(25, 220, 250, 40);
-		configurationPane.add(kontrast);
+		contrastt = new JLabel("contrastt: 100%");
+		contrastt.setFont(new Font("Arial", Font.PLAIN, 12));
+		contrastt.setBounds(25, 220, 250, 40);
+		configurationPane.add(contrastt);
 
 		brightnessSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
 		brightnessSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -221,18 +221,18 @@ public class GraphicProgram extends JFrame {
 		brightnessSlider.addMouseListener(mouseListener);
 		configurationPane.add(brightnessSlider);
 
-		kontrastSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
-		kontrastSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		kontrastSlider.setBackground(Color.WHITE);
-		kontrastSlider.setValue(100);
-		kontrastSlider.setBounds(25, 255, 250, 40);
-		kontrastSlider.setMinorTickSpacing(25);
-		kontrastSlider.setMajorTickSpacing(100);
-		kontrastSlider.setPaintTicks(true);
-		kontrastSlider.setPaintLabels(true);
-		kontrastSlider.addMouseMotionListener(mouseMotionListener);
-		kontrastSlider.addMouseListener(mouseListener);
-		configurationPane.add(kontrastSlider);
+		contrasttSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
+		contrasttSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		contrasttSlider.setBackground(Color.WHITE);
+		contrasttSlider.setValue(100);
+		contrasttSlider.setBounds(25, 255, 250, 40);
+		contrasttSlider.setMinorTickSpacing(25);
+		contrasttSlider.setMajorTickSpacing(100);
+		contrasttSlider.setPaintTicks(true);
+		contrasttSlider.setPaintLabels(true);
+		contrasttSlider.addMouseMotionListener(mouseMotionListener);
+		contrasttSlider.addMouseListener(mouseListener);
+		configurationPane.add(contrasttSlider);
 
 		grayOne = new JButton("szarość- sposób 1");
 		grayOne.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -279,18 +279,18 @@ public class GraphicProgram extends JFrame {
 		}
 
 		for (int i = 0; i < 4; i++) {
-			dzialania[i] = new JTextField("1");
-			dzialania[i].setBackground(Color.WHITE);
-			dzialania[i].setFont(new Font("Tahoma", Font.PLAIN, 11));
-			dzialania[i].addMouseListener(mouseListener);
-			dzialania[i].addKeyListener(keyListener);
-			configurationPane.add(dzialania[i]);
+			numberOperation[i] = new JTextField("1");
+			numberOperation[i].setBackground(Color.WHITE);
+			numberOperation[i].setFont(new Font("Tahoma", Font.PLAIN, 11));
+			numberOperation[i].addMouseListener(mouseListener);
+			numberOperation[i].addKeyListener(keyListener);
+			configurationPane.add(numberOperation[i]);
 		}
 
-		dzialania[0].setBounds(90, 360, 40, 30);
-		dzialania[1].setBounds(230, 360, 40, 30);
-		dzialania[2].setBounds(90, 400, 40, 30);
-		dzialania[3].setBounds(230, 400, 40, 30);
+		numberOperation[0].setBounds(90, 360, 40, 30);
+		numberOperation[1].setBounds(230, 360, 40, 30);
+		numberOperation[2].setBounds(90, 400, 40, 30);
+		numberOperation[3].setBounds(230, 400, 40, 30);
 
 		JLabel lblFiltrowanieMaska = new JLabel("filtry: ");
 		lblFiltrowanieMaska.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -337,19 +337,19 @@ public class GraphicProgram extends JFrame {
 	}
 
 	private void getAddedNumber() {
-		doAddidngCheck = Integer.parseInt(dzialania[0].getText());
+		doAddidngCheck = Integer.parseInt(numberOperation[0].getText());
 	}
 
 	private void getReducedNumber() {
-		doSubtractionCheck = Integer.parseInt(dzialania[1].getText());
+		doSubtractionCheck = Integer.parseInt(numberOperation[1].getText());
 	}
 
 	private void getMultipliedNumber() {
-		mnozonaCheck = Integer.parseInt(dzialania[2].getText());
+		multipledCheck = Integer.parseInt(numberOperation[2].getText());
 	}
 
 	private void getDividedNumber() {
-		dzielonaCheck = Integer.parseInt(dzialania[3].getText());
+		dividedCheck = Integer.parseInt(numberOperation[3].getText());
 	}
 
 	private class ImageHelper {
@@ -455,7 +455,7 @@ public class GraphicProgram extends JFrame {
 			int[] LUT = new int[256];
 
 			for (int i = 0; i < 256; i++) {
-				double newValue = i * mnozonaCheck;
+				double newValue = i * multipledCheck;
 				if (newValue > 255)
 					LUT[i] = 255;
 				else if (newValue < 0)
@@ -471,7 +471,7 @@ public class GraphicProgram extends JFrame {
 			int[] LUT = new int[256];
 
 			for (int i = 0; i < 256; i++) {
-				double newValue = i / dzielonaCheck;
+				double newValue = i / dividedCheck;
 				if (newValue > 255)
 					LUT[i] = 255;
 				else if (newValue < 0)
@@ -498,11 +498,11 @@ public class GraphicProgram extends JFrame {
 			imageHelper.updateImage(LUT);
 		}
 
-		public void kontrast(double kontrastValue) {
+		public void contrastt(double contrasttValue) {
 			int[] LUT = new int[256];
 
 			for (int i = 0; i < 256; i++) {
-				double newValue = (kontrastValue) * (i - (255 / 2) + 255 / 2);
+				double newValue = (contrasttValue) * (i - (255 / 2) + 255 / 2);
 				if (newValue > 255)
 					LUT[i] = 255;
 				else if (newValue < 0)
@@ -633,7 +633,7 @@ public class GraphicProgram extends JFrame {
 				imageHelper.reset();
 				zoomSlider.setValue(100);
 				brightnessSlider.setValue(100);
-				kontrastSlider.setValue(100);
+				contrasttSlider.setValue(100);
 				imagePane.repaint();
 			} else if (e.getSource() == miMedian3) {
 				filter.medianFilter(3);
@@ -705,8 +705,8 @@ public class GraphicProgram extends JFrame {
 				actualImageScale.setText("Rozmiar obrazu: " + zoomSlider.getValue() + "%");
 			} else if (e.getSource() == brightnessSlider) {
 				brightness.setText("Jasność: " + brightnessSlider.getValue() + "%");
-			} else if (e.getSource() == kontrastSlider) {
-				kontrast.setText("Kontrast: " + kontrastSlider.getValue() + "%");
+			} else if (e.getSource() == contrasttSlider) {
+				contrastt.setText("contrastt: " + contrasttSlider.getValue() + "%");
 			}
 		}
 
@@ -735,8 +735,8 @@ public class GraphicProgram extends JFrame {
 				actualImageScale.setText("Rozmiar obrazu: 100% ");
 				brightnessSlider.setValue(100);
 				brightness.setText("Jasność: 100% ");
-				kontrastSlider.setValue(100);
-				kontrast.setText("Kontrast: 100% ");
+				contrasttSlider.setValue(100);
+				contrastt.setText("contrastt: 100% ");
 				imagePane.repaint();
 
 			}
@@ -771,8 +771,8 @@ public class GraphicProgram extends JFrame {
 			} else if (e.getSource() == brightnessSlider && actualImage != null) {
 				filter.brightness((double) brightnessSlider.getValue() / 100);
 				imagePane.repaint();
-			} else if (e.getSource() == kontrastSlider && actualImage != null) {
-				filter.kontrast((double) kontrastSlider.getValue() / 100);
+			} else if (e.getSource() == contrasttSlider && actualImage != null) {
+				filter.contrastt((double) contrasttSlider.getValue() / 100);
 				imagePane.repaint();
 			}
 		}
