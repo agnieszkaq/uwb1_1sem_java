@@ -1,11 +1,9 @@
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,7 +35,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.InputEvent;
 
-public class Frame extends JFrame {
+public class GraphicProgram extends JFrame {
 	/**
 	 * 
 	 */
@@ -50,7 +48,6 @@ public class Frame extends JFrame {
 	private JFileChooser chooser, saveChooser;
 	private JScrollPane scrollImagePane;
 	private JSlider zoomSlider, brightnessSlider, kontrastSlider;
-	private JTextField oblongHeight, oblondWidth, circleR, lineX, lineY;
 	private JTextField[] dzialania = new JTextField[4];
 	private JPanel contentPane, configurationPane, imagePane;
 	private JMenuBar menuBar;
@@ -60,12 +57,11 @@ public class Frame extends JFrame {
 	private JComboBox<Object> filterType;
 
 	int id = 0, positionX, positionY, oHeightCheck = 0, oWidthCheck = 0, circleRCheck, lineXCheck = 0, lineYCheck = 0,
-			dodanaCheck = 0, odejmowanaCheck = 0, mnozonaCheck = 1, dzielonaCheck = 1, iWidth, iHeight;
+			doAddidngCheck = 0, doSubtractionCheck = 0, mnozonaCheck = 1, dzielonaCheck = 1, iWidth, iHeight;
 	private Robot robot;
-	private Point pInvert = null;
 
-	public Frame() {
-		super("Frame");
+	public GraphicProgram() {
+		super("Linia");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1350, 700);
 		setResizable(false);
@@ -143,13 +139,13 @@ public class Frame extends JFrame {
 		configurationPane.setLayout(null);
 		contentPane.add(configurationPane);
 
-		zoomSlider = new JSlider(JSlider.HORIZONTAL, 0, 1350, 1);
+		zoomSlider = new JSlider(JSlider.HORIZONTAL, 0, 500, 1);
 		zoomSlider.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		zoomSlider.setBackground(Color.WHITE);
 		zoomSlider.setValue(100);
 		zoomSlider.setBounds(25, 105, 250, 40);
 		zoomSlider.setMinorTickSpacing(25);
-		zoomSlider.setMajorTickSpacing(200);
+		zoomSlider.setMajorTickSpacing(100);
 		zoomSlider.setPaintTicks(true);
 		zoomSlider.setPaintLabels(true);
 		zoomSlider.addMouseMotionListener(mouseMotionListener);
@@ -202,7 +198,7 @@ public class Frame extends JFrame {
 		actualImageScale.setBounds(25, 85, 250, 12);
 		configurationPane.add(actualImageScale);
 
-		brightness = new JLabel("Jasnoœæ: 100%");
+		brightness = new JLabel("Jasność: 100%");
 		brightness.setFont(new Font("Arial", Font.PLAIN, 12));
 		brightness.setBounds(25, 145, 250, 40);
 		configurationPane.add(brightness);
@@ -238,7 +234,7 @@ public class Frame extends JFrame {
 		kontrastSlider.addMouseListener(mouseListener);
 		configurationPane.add(kontrastSlider);
 
-		grayOne = new JButton("szaroœci- sposób 1");
+		grayOne = new JButton("szarość- sposób 1");
 		grayOne.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		grayOne.setBorderPainted(false);
 		grayOne.setBackground(Color.ORANGE);
@@ -247,7 +243,7 @@ public class Frame extends JFrame {
 		configurationPane.add(grayOne);
 		grayOne.addMouseListener(mouseListener);
 
-		grayTwo = new JButton("szaroœci- sposób 2");
+		grayTwo = new JButton("szarość- sposób 2");
 		grayTwo.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		grayTwo.setBorderPainted(false);
 		grayTwo.setBackground(Color.ORANGE);
@@ -341,19 +337,19 @@ public class Frame extends JFrame {
 		return e.getY();
 	}
 
-	private void getDodana() {
-		dodanaCheck = Integer.parseInt(dzialania[0].getText());
+	private void getAddedNumber() {
+		doAddidngCheck = Integer.parseInt(dzialania[0].getText());
 	}
 
-	private void getOdejmowana() {
-		odejmowanaCheck = Integer.parseInt(dzialania[1].getText());
+	private void getReducedNumber() {
+		doSubtractionCheck = Integer.parseInt(dzialania[1].getText());
 	}
 
-	private void getMnozona() {
+	private void getMultipliedNumber() {
 		mnozonaCheck = Integer.parseInt(dzialania[2].getText());
 	}
 
-	private void getDzielona() {
+	private void getDividedNumber() {
 		dzielonaCheck = Integer.parseInt(dzialania[3].getText());
 	}
 
@@ -417,12 +413,12 @@ public class Frame extends JFrame {
 		imagePane.repaint();
 	}
 
-	private void dodana() {
-		getDodana();
+	private void doAddidng() {
+		getAddedNumber();
 		int[] LUT = new int[256];
 
 		for (int i = 0; i < 256; i++) {
-			double newValue = i + dodanaCheck;
+			double newValue = i + doAddidngCheck;
 			if (newValue > 255)
 				LUT[i] = 255;
 			else if (newValue < 0)
@@ -433,12 +429,12 @@ public class Frame extends JFrame {
 		updateImage(LUT);
 	}
 
-	private void odejmowana() {
-		getOdejmowana();
+	private void doSubtraction() {
+		getReducedNumber();
 		int[] LUT = new int[256];
 
 		for (int i = 0; i < 256; i++) {
-			double newValue = i - odejmowanaCheck;
+			double newValue = i - doSubtractionCheck;
 			if (newValue > 255)
 				LUT[i] = 255;
 			else if (newValue < 0)
@@ -449,8 +445,8 @@ public class Frame extends JFrame {
 		updateImage(LUT);
 	}
 
-	private void mnożona() {
-		getMnozona();
+	private void doMultiplication() {
+		getMultipliedNumber();
 		int[] LUT = new int[256];
 
 		for (int i = 0; i < 256; i++) {
@@ -465,9 +461,8 @@ public class Frame extends JFrame {
 		updateImage(LUT);
 	}
 
-	private void dzielena() {
-		getDzielona();
-
+	private void doDivision() {
+		getDividedNumber();
 		int[] LUT = new int[256];
 
 		for (int i = 0; i < 256; i++) {
@@ -575,7 +570,7 @@ public class Frame extends JFrame {
 				int pxGreen[] = new int[size * size];
 				int pxBlue[] = new int[size * size];
 				int a = 0;
-				
+
 				for (int k = i - margin; k <= i + margin; k++) {
 					for (int l = j - margin; l <= j + margin; l++) {
 						pxRed[a] = actualImage.getRaster().getPixel(k, l, new int[4])[0];
@@ -595,7 +590,6 @@ public class Frame extends JFrame {
 		actualImage = newImage;
 		imagePane.repaint();
 	}
-
 
 	private class MyActionListener implements ActionListener {
 		@Override
@@ -639,7 +633,7 @@ public class Frame extends JFrame {
 			} else if (e.getSource() == filterOK) {
 				runFilter();
 			} else if (e.getSource() == filterType) {
-				if (filterType.getSelectedItem().equals("Wygladzający (uśredniający)")) {
+				if (filterType.getSelectedItem().equals("Wygładzający (uśredniający)")) {
 					filterMask[0][0].setText("1");
 					filterMask[0][1].setText("1");
 					filterMask[0][2].setText("1");
@@ -701,7 +695,7 @@ public class Frame extends JFrame {
 			if (e.getSource() == zoomSlider) {
 				actualImageScale.setText("Rozmiar obrazu: " + zoomSlider.getValue() + "%");
 			} else if (e.getSource() == brightnessSlider) {
-				brightness.setText("Jasnoœæ: " + brightnessSlider.getValue() + "%");
+				brightness.setText("Jasność: " + brightnessSlider.getValue() + "%");
 			} else if (e.getSource() == kontrastSlider) {
 				kontrast.setText("Kontrast: " + kontrastSlider.getValue() + "%");
 			}
@@ -727,18 +721,15 @@ public class Frame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getSource() == imagePane) {
-				licznik++;
-				pInvert = new Point(e.getX(), e.getY());
-				licznik++;
-
-				if (licznik == 3) {
-					reset();
-					zoomSlider.setValue(100);
-					brightnessSlider.setValue(100);
-					kontrastSlider.setValue(100);
-				}
+				reset();
+				zoomSlider.setValue(100);
+				actualImageScale.setText("Rozmiar obrazu: 100% ");
+				brightnessSlider.setValue(100);
+				brightness.setText("Jasność: 100% ");
+				kontrastSlider.setValue(100);
+				kontrast.setText("Kontrast: 100% ");
 				imagePane.repaint();
-				licznik = 1;
+
 			}
 			if (e.getSource() == grayOne) {
 				greyscale();
@@ -747,16 +738,16 @@ public class Frame extends JFrame {
 				greyscaleTwo();
 			}
 			if (e.getSource() == buttons[0]) {
-				dodana();
+				doAddidng();
 			}
 			if (e.getSource() == buttons[1]) {
-				odejmowana();
+				doSubtraction();
 			}
 			if (e.getSource() == buttons[2]) {
-				mnożona();
+				doMultiplication();
 			}
 			if (e.getSource() == buttons[3]) {
-				dzielena();
+				doDivision();
 			}
 		}
 

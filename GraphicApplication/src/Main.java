@@ -1,16 +1,13 @@
 import java.awt.EventQueue;
 
-public class GraphicProgram {
+public class Main {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
-
-			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				try {
-					new Frame();
-					System.out.println("DUPA");
+					GraphicProgram frame = new GraphicProgram();
+					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
