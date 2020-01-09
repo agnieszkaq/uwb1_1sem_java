@@ -40,28 +40,28 @@ public class GraphicProgram extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JButton[] buttons = new JButton[7];
-	private int licznik = 1;
-	private JButton grayTwo, grayOne, filterOK;
+
 	private BufferedImage actualImage, originalImage;
-	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrast;
+	private JButton[] buttons = new JButton[7];
+	private JButton grayTwo, grayOne, filterOK;
+	private JComboBox<Object> filterType;
 	private JFileChooser chooser, saveChooser;
+	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrast;
+	private JMenu mPlik, mObraz, mOkno;
+	private JMenuBar menuBar;
+	private JMenuItem miOpenImage, miSaveImage, miResetImage, miExit, miMedian3, miMedian5;
+	private JPanel contentPane, configurationPane, imagePane;
 	private JScrollPane scrollImagePane;
 	private JSlider zoomSlider, brightnessSlider, contrastSlider;
 	private JTextField[] numberOperation = new JTextField[4];
-	private JPanel contentPane, configurationPane, imagePane;
-	private JMenuBar menuBar;
-	private JMenu mPlik, mObraz, mOkno;
-	private JMenuItem miOpenImage, miSaveImage, miResetImage, miExit, miMedian3, miMedian5;
 	private JTextField filterMask[][] = new JTextField[3][3];
-	private JComboBox<Object> filterType;
+	private Robot robot;
 
 	int id = 0, positionX, positionY, oHeightCheck = 0, oWidthCheck = 0, circleRCheck, lineXCheck = 0, lineYCheck = 0,
 			doAddidngCheck = 0, doSubtractionCheck = 0, multipledCheck = 1, dividedCheck = 1, iWidth, iHeight;
-	private Robot robot;
 
 	public GraphicProgram() {
-		super("Linia");
+		super("Program graficzny");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1350, 700);
 		setResizable(false);
@@ -275,7 +275,6 @@ public class GraphicProgram extends JFrame {
 			buttons[i].setBackground(Color.ORANGE);
 			buttons[i].addMouseListener(mouseListener);
 			configurationPane.add(buttons[i]);
-
 		}
 
 		for (int i = 0; i < 4; i++) {
@@ -327,15 +326,6 @@ public class GraphicProgram extends JFrame {
 			}
 		}
 	}
-
-	public int getThisX(MouseEvent e) {
-		return e.getX();
-	}
-
-	public int getThisY(MouseEvent e) {
-		return e.getY();
-	}
-
 	private void getAddedNumber() {
 		doAddidngCheck = Integer.parseInt(numberOperation[0].getText());
 	}
@@ -373,7 +363,6 @@ public class GraphicProgram extends JFrame {
 					BufferedImage.TYPE_INT_RGB);
 			Graphics g = actualImage.createGraphics();
 			g.drawImage(originalImage, 0, 0, null);
-
 		}
 
 		private void updateImage(int[] LUT) {
@@ -392,6 +381,7 @@ public class GraphicProgram extends JFrame {
 	ImageHelper imageHelper = new ImageHelper();
 
 	private class Filter {
+
 		private void greyscale() {
 			int[] pixel = new int[4];
 			for (int i = 0; i < actualImage.getWidth(); i++) {
@@ -524,9 +514,11 @@ public class GraphicProgram extends JFrame {
 					BufferedImage.TYPE_INT_RGB);
 			Graphics g = newImage.createGraphics();
 			g.drawImage(actualImage, 0, 0, null);
+
 			for (int i = 1; i < actualImage.getWidth() - 1; i++) {
 				for (int j = 1; j < actualImage.getHeight() - 1; j++) {
 					int redSum = 0, greenSum = 0, blueSum = 0;
+
 					for (int k = i - 1; k <= i + 1; k++) {
 						for (int l = j - 1; l <= j + 1; l++) {
 							redSum += actualImage.getRaster().getPixel(k, l, new int[4])[0]
@@ -544,20 +536,25 @@ public class GraphicProgram extends JFrame {
 					}
 					if (redSum > 255)
 						redSum = 255;
+
 					else if (redSum < 0)
 						redSum = 0;
+
 					if (greenSum > 255)
 						greenSum = 255;
+
 					else if (greenSum < 0)
 						greenSum = 0;
+
 					if (blueSum > 255)
 						blueSum = 255;
+
 					else if (blueSum < 0)
 						blueSum = 0;
+
 					newImage.getRaster().setPixels(i, j, 1, 1, new int[] { redSum, greenSum, blueSum });
 				}
 			}
-
 			actualImage = newImage;
 			imagePane.repaint();
 		}
@@ -591,7 +588,6 @@ public class GraphicProgram extends JFrame {
 							new int[] { pxRed[(a + 1) / 2], pxGreen[(a + 1) / 2], pxBlue[(a + 1) / 2] });
 				}
 			}
-
 			actualImage = newImage;
 			imagePane.repaint();
 		}
@@ -600,11 +596,11 @@ public class GraphicProgram extends JFrame {
 	Filter filter = new Filter();
 
 	private class MyActionListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == miOpenImage) {
 				int returnVal = chooser.showOpenDialog(configurationPane);
+
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						actualImage = ImageIO.read(chooser.getSelectedFile());
@@ -612,7 +608,6 @@ public class GraphicProgram extends JFrame {
 					} catch (IOException f) {
 						f.printStackTrace();
 					}
-
 					iWidth = actualImage.getWidth();
 					iHeight = actualImage.getHeight();
 					imagePane.setPreferredSize(new Dimension(actualImage.getWidth() * zoomSlider.getValue() / 100,
@@ -622,6 +617,7 @@ public class GraphicProgram extends JFrame {
 				}
 			} else if (e.getSource() == miSaveImage) {
 				int returnVal = saveChooser.showSaveDialog(configurationPane);
+
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					try {
 						ImageIO.write(actualImage, "PNG", new File(saveChooser.getSelectedFile() + ".png"));
@@ -629,18 +625,22 @@ public class GraphicProgram extends JFrame {
 						e1.printStackTrace();
 					}
 				}
-			} else if (e.getSource() == miResetImage || licznik == 3) {
+			} else if (e.getSource() == miResetImage) {
 				imageHelper.reset();
 				zoomSlider.setValue(100);
 				brightnessSlider.setValue(100);
 				contrastSlider.setValue(100);
 				imagePane.repaint();
+
 			} else if (e.getSource() == miMedian3) {
 				filter.medianFilter(3);
+
 			} else if (e.getSource() == miMedian5) {
 				filter.medianFilter(5);
+
 			} else if (e.getSource() == filterOK) {
 				filter.runFilter();
+
 			} else if (e.getSource() == filterType) {
 				if (filterType.getSelectedItem().equals("Wygładzający (uśredniający)")) {
 					filterMask[0][0].setText("1");
@@ -652,6 +652,7 @@ public class GraphicProgram extends JFrame {
 					filterMask[2][0].setText("1");
 					filterMask[2][1].setText("1");
 					filterMask[2][2].setText("1");
+
 				} else if (filterType.getSelectedItem().equals("Sobel")) {
 					filterMask[0][0].setText("1");
 					filterMask[0][1].setText("2");
@@ -662,6 +663,7 @@ public class GraphicProgram extends JFrame {
 					filterMask[2][0].setText("-1");
 					filterMask[2][1].setText("-2");
 					filterMask[2][2].setText("-1");
+
 				} else if (filterType.getSelectedItem().equals("Górnoprzepustowy")) {
 					filterMask[0][0].setText("-1");
 					filterMask[0][1].setText("-1");
@@ -672,6 +674,7 @@ public class GraphicProgram extends JFrame {
 					filterMask[2][0].setText("-1");
 					filterMask[2][1].setText("-1");
 					filterMask[2][2].setText("-1");
+
 				} else if (filterType.getSelectedItem().equals("Rozmycie Gaussowskie")) {
 					filterMask[0][0].setText("1");
 					filterMask[0][1].setText("2");
@@ -682,6 +685,7 @@ public class GraphicProgram extends JFrame {
 					filterMask[2][0].setText("1");
 					filterMask[2][1].setText("2");
 					filterMask[2][2].setText("1");
+
 				} else if (filterType.getSelectedItem().equals("Splot maski")) {
 					filterMask[0][0].setText("0");
 					filterMask[0][1].setText("0");
@@ -693,7 +697,6 @@ public class GraphicProgram extends JFrame {
 					filterMask[2][1].setText("0");
 					filterMask[2][2].setText("0");
 				}
-
 			}
 		}
 	}
@@ -703,8 +706,10 @@ public class GraphicProgram extends JFrame {
 		public void mouseDragged(MouseEvent e) {
 			if (e.getSource() == zoomSlider) {
 				actualImageScale.setText("Rozmiar obrazu: " + zoomSlider.getValue() + "%");
+
 			} else if (e.getSource() == brightnessSlider) {
 				brightness.setText("Jasność: " + brightnessSlider.getValue() + "%");
+
 			} else if (e.getSource() == contrastSlider) {
 				contrast.setText("Kontrast: " + contrastSlider.getValue() + "%");
 			}
@@ -738,7 +743,6 @@ public class GraphicProgram extends JFrame {
 				contrastSlider.setValue(100);
 				contrast.setText("Kontrast: 100% ");
 				imagePane.repaint();
-
 			}
 			if (e.getSource() == grayOne) {
 				filter.greyscale();
@@ -763,14 +767,16 @@ public class GraphicProgram extends JFrame {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.getSource() == zoomSlider) {
+
 				imageHelper.resize((double) zoomSlider.getValue() / 100);
 				imagePane.setPreferredSize(new Dimension((int) ((double) iWidth * zoomSlider.getValue() / 100),
 						(int) ((double) iHeight * zoomSlider.getValue() / 100)));
-
 				imagePane.repaint();
+
 			} else if (e.getSource() == brightnessSlider && actualImage != null) {
 				filter.brightness((double) brightnessSlider.getValue() / 100);
 				imagePane.repaint();
+
 			} else if (e.getSource() == contrastSlider && actualImage != null) {
 				filter.contrast((double) contrastSlider.getValue() / 100);
 				imagePane.repaint();
