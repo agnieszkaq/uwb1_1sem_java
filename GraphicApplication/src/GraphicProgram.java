@@ -13,7 +13,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -36,9 +35,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.InputEvent;
 
 public class GraphicProgram extends JFrame {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private BufferedImage actualImage, originalImage;
@@ -47,9 +43,9 @@ public class GraphicProgram extends JFrame {
 	private JComboBox<Object> filterType;
 	private JFileChooser chooser, saveChooser;
 	private JLabel colorRGB, colorPreview, actualImageScale, brightness, contrast;
-	private JMenu mPlik, mObraz, mOkno;
+	private JMenu mPlik;
 	private JMenuBar menuBar;
-	private JMenuItem miOpenImage, miSaveImage, miResetImage, miExit, miMedian3, miMedian5;
+	private JMenuItem miOpenImage, miSaveImage, miResetImage, miExit;
 	private JPanel contentPane, configurationPane, imagePane;
 	private JScrollPane scrollImagePane;
 	private JSlider zoomSlider, brightnessSlider, contrastSlider;
@@ -59,6 +55,9 @@ public class GraphicProgram extends JFrame {
 
 	int id = 0, positionX, positionY, oHeightCheck = 0, oWidthCheck = 0, circleRCheck, lineXCheck = 0, lineYCheck = 0,
 			doAddidngCheck = 0, doSubtractionCheck = 0, multipledCheck = 1, dividedCheck = 1, iWidth, iHeight;
+
+	Img img = new Img();
+	Filters filters = new Filters();
 
 	public GraphicProgram() {
 		super("Program graficzny");
@@ -106,31 +105,6 @@ public class GraphicProgram extends JFrame {
 		miExit.addActionListener(actionListener);
 		mPlik.add(miExit);
 
-		mObraz = new JMenu("Obraz");
-		mObraz.setBackground(Color.DARK_GRAY);
-		menuBar.add(mObraz);
-
-		mOkno = new JMenu("Okno");
-		mOkno.setBackground(Color.DARK_GRAY);
-		menuBar.add(mOkno);
-		mObraz.addSeparator();
-
-		JMenu mnFiltry = new JMenu("Filtry");
-		mnFiltry.setBackground(Color.WHITE);
-		mObraz.add(mnFiltry);
-
-		mnFiltry.addSeparator();
-
-		miMedian3 = new JMenuItem("Filtr medianowy 3x3");
-		miMedian3.setBackground(Color.WHITE);
-		miMedian3.addActionListener(actionListener);
-		mnFiltry.add(miMedian3);
-
-		miMedian5 = new JMenuItem("Filtr medianowy 5x5");
-		miMedian5.setBackground(Color.WHITE);
-		miMedian5.addActionListener(actionListener);
-		mnFiltry.add(miMedian5);
-
 		setJMenuBar(menuBar);
 
 		configurationPane = new JPanel();
@@ -153,9 +127,6 @@ public class GraphicProgram extends JFrame {
 		configurationPane.add(zoomSlider);
 
 		imagePane = new JPanel() {
-			/**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -326,274 +297,30 @@ public class GraphicProgram extends JFrame {
 			}
 		}
 	}
-	private void getAddedNumber() {
-		doAddidngCheck = Integer.parseInt(numberOperation[0].getText());
+
+	public BufferedImage getActualImage() {
+		return actualImage;
 	}
 
-	private void getReducedNumber() {
-		doSubtractionCheck = Integer.parseInt(numberOperation[1].getText());
+	public void setActualImage(BufferedImage actualImage) {
+		this.actualImage = actualImage;
 	}
 
-	private void getMultipliedNumber() {
-		multipledCheck = Integer.parseInt(numberOperation[2].getText());
+	private Double getAddedNumber() {
+		return Double.parseDouble(numberOperation[0].getText());
 	}
 
-	private void getDividedNumber() {
-		dividedCheck = Integer.parseInt(numberOperation[3].getText());
+	private Double getReducedNumber() {
+		return Double.parseDouble(numberOperation[1].getText());
 	}
 
-	private class ImageHelper {
-
-		private void resize(double ratio) {
-			BufferedImage newImage = new BufferedImage((int) (actualImage.getWidth() * ratio),
-					(int) (actualImage.getHeight() * ratio), BufferedImage.TYPE_INT_RGB);
-
-			int[] pixel = new int[4];
-			for (int i = 0; i < newImage.getWidth(); i++) {
-				for (int j = 0; j < newImage.getHeight(); j++) {
-					pixel = actualImage.getRaster().getPixel((int) (i / ratio), (int) (j / ratio), new int[4]);
-					newImage.getRaster().setPixels(i, j, 1, 1, new int[] { pixel[0], pixel[1], pixel[2], pixel[3] });
-				}
-			}
-			actualImage = newImage;
-		}
-
-		private void reset() {
-			actualImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g = actualImage.createGraphics();
-			g.drawImage(originalImage, 0, 0, null);
-		}
-
-		private void updateImage(int[] LUT) {
-			int[] pixel = new int[4];
-			for (int i = 0; i < actualImage.getWidth(); i++) {
-				for (int j = 0; j < actualImage.getHeight(); j++) {
-					pixel = actualImage.getRaster().getPixel(i, j, new int[4]);
-					actualImage.getRaster().setPixels(i, j, 1, 1,
-							new int[] { LUT[pixel[0]], LUT[pixel[1]], LUT[pixel[2]], LUT[pixel[3]] });
-				}
-			}
-			imagePane.repaint();
-		}
+	private Double getMultipliedNumber() {
+		return Double.parseDouble(numberOperation[2].getText());
 	}
 
-	ImageHelper imageHelper = new ImageHelper();
-
-	private class Filter {
-
-		private void greyscale() {
-			int[] pixel = new int[4];
-			for (int i = 0; i < actualImage.getWidth(); i++) {
-				for (int j = 0; j < actualImage.getHeight(); j++) {
-					pixel = actualImage.getRaster().getPixel(i, j, new int[4]);
-					int gs = (pixel[0] + pixel[1] + pixel[2]) / 3;
-
-					actualImage.getRaster().setPixels(i, j, 1, 1, new int[] { gs, gs, gs });
-				}
-			}
-			imagePane.repaint();
-		}
-
-		private void greyscaleTwo() {
-			int[] pixel = new int[4];
-			for (int i = 0; i < actualImage.getWidth(); i++) {
-				for (int j = 0; j < actualImage.getHeight(); j++) {
-					pixel = actualImage.getRaster().getPixel(i, j, new int[4]);
-
-					double gs = (pixel[0] * 0.3 + pixel[1] * 0.59 + pixel[2] * 0.11);
-					actualImage.getRaster().setPixels(i, j, 1, 1, new int[] { (int) gs, (int) gs, (int) gs });
-				}
-			}
-			imagePane.repaint();
-		}
-
-		private void doAddidng() {
-			getAddedNumber();
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = i + doAddidngCheck;
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-		}
-
-		private void doSubtraction() {
-			getReducedNumber();
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = i - doSubtractionCheck;
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-		}
-
-		private void doMultiplication() {
-			getMultipliedNumber();
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = i * multipledCheck;
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-		}
-
-		private void doDivision() {
-			getDividedNumber();
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = i / dividedCheck;
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-
-		}
-
-		public void brightness(double brightnessValue) {
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = i + brightnessValue * 10;
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-		}
-
-		public void contrast(double contrastValue) {
-			int[] LUT = new int[256];
-
-			for (int i = 0; i < 256; i++) {
-				double newValue = (contrastValue) * (i - (255 / 2) + 255 / 2);
-				if (newValue > 255)
-					LUT[i] = 255;
-				else if (newValue < 0)
-					LUT[i] = 0;
-				else
-					LUT[i] = (int) newValue;
-			}
-			imageHelper.updateImage(LUT);
-		}
-
-		private void runFilter() {
-			int maskSum = 0;
-			for (int i = 0; i < 3; i++) {
-				for (int j = 0; j < 3; j++) {
-					maskSum += Integer.parseInt(filterMask[i][j].getText());
-				}
-			}
-			BufferedImage newImage = new BufferedImage(actualImage.getWidth(), actualImage.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g = newImage.createGraphics();
-			g.drawImage(actualImage, 0, 0, null);
-
-			for (int i = 1; i < actualImage.getWidth() - 1; i++) {
-				for (int j = 1; j < actualImage.getHeight() - 1; j++) {
-					int redSum = 0, greenSum = 0, blueSum = 0;
-
-					for (int k = i - 1; k <= i + 1; k++) {
-						for (int l = j - 1; l <= j + 1; l++) {
-							redSum += actualImage.getRaster().getPixel(k, l, new int[4])[0]
-									* Integer.parseInt(filterMask[i + 1 - k][j + 1 - l].getText());
-							greenSum += actualImage.getRaster().getPixel(k, l, new int[4])[1]
-									* Integer.parseInt(filterMask[i + 1 - k][j + 1 - l].getText());
-							blueSum += actualImage.getRaster().getPixel(k, l, new int[4])[2]
-									* Integer.parseInt(filterMask[i + 1 - k][j + 1 - l].getText());
-						}
-					}
-					if (maskSum != 0) {
-						redSum /= maskSum;
-						greenSum /= maskSum;
-						blueSum /= maskSum;
-					}
-					if (redSum > 255)
-						redSum = 255;
-
-					else if (redSum < 0)
-						redSum = 0;
-
-					if (greenSum > 255)
-						greenSum = 255;
-
-					else if (greenSum < 0)
-						greenSum = 0;
-
-					if (blueSum > 255)
-						blueSum = 255;
-
-					else if (blueSum < 0)
-						blueSum = 0;
-
-					newImage.getRaster().setPixels(i, j, 1, 1, new int[] { redSum, greenSum, blueSum });
-				}
-			}
-			actualImage = newImage;
-			imagePane.repaint();
-		}
-
-		private void medianFilter(int size) {
-			BufferedImage newImage = new BufferedImage(actualImage.getWidth(), actualImage.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g = newImage.createGraphics();
-			g.drawImage(actualImage, 0, 0, null);
-
-			int margin = ((size - 1) / 2);
-			for (int i = margin; i < actualImage.getWidth() - margin; i++) {
-				for (int j = margin; j < actualImage.getHeight() - margin; j++) {
-					int pxRed[] = new int[size * size];
-					int pxGreen[] = new int[size * size];
-					int pxBlue[] = new int[size * size];
-					int a = 0;
-
-					for (int k = i - margin; k <= i + margin; k++) {
-						for (int l = j - margin; l <= j + margin; l++) {
-							pxRed[a] = actualImage.getRaster().getPixel(k, l, new int[4])[0];
-							pxGreen[a] = actualImage.getRaster().getPixel(k, l, new int[4])[1];
-							pxBlue[a] = actualImage.getRaster().getPixel(k, l, new int[4])[2];
-							a++;
-						}
-					}
-					Arrays.sort(pxRed);
-					Arrays.sort(pxGreen);
-					Arrays.sort(pxBlue);
-					newImage.getRaster().setPixels(i, j, 1, 1,
-							new int[] { pxRed[(a + 1) / 2], pxGreen[(a + 1) / 2], pxBlue[(a + 1) / 2] });
-				}
-			}
-			actualImage = newImage;
-			imagePane.repaint();
-		}
+	private Double getDividedNumber() {
+		return Double.parseDouble(numberOperation[3].getText());
 	}
-
-	Filter filter = new Filter();
 
 	private class MyActionListener implements ActionListener {
 		@Override
@@ -626,20 +353,14 @@ public class GraphicProgram extends JFrame {
 					}
 				}
 			} else if (e.getSource() == miResetImage) {
-				imageHelper.reset();
+				setActualImage(originalImage);
 				zoomSlider.setValue(100);
 				brightnessSlider.setValue(100);
 				contrastSlider.setValue(100);
 				imagePane.repaint();
 
-			} else if (e.getSource() == miMedian3) {
-				filter.medianFilter(3);
-
-			} else if (e.getSource() == miMedian5) {
-				filter.medianFilter(5);
-
 			} else if (e.getSource() == filterOK) {
-				filter.runFilter();
+				actualImage = filters.runFilter(actualImage, imagePane, filterMask);
 
 			} else if (e.getSource() == filterType) {
 				if (filterType.getSelectedItem().equals("Wygładzający (uśredniający)")) {
@@ -735,7 +456,7 @@ public class GraphicProgram extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getSource() == imagePane) {
-				imageHelper.reset();
+			setActualImage(originalImage);
 				zoomSlider.setValue(100);
 				actualImageScale.setText("Rozmiar obrazu: 100% ");
 				brightnessSlider.setValue(100);
@@ -745,40 +466,43 @@ public class GraphicProgram extends JFrame {
 				imagePane.repaint();
 			}
 			if (e.getSource() == grayOne) {
-				filter.greyscale();
+				filters.greyscale(actualImage, imagePane);
 			}
 			if (e.getSource() == grayTwo) {
-				filter.greyscaleTwo();
+				filters.greyscaleTwo(actualImage, imagePane);
 			}
 			if (e.getSource() == buttons[0]) {
-				filter.doAddidng();
+				filters.mathMethod(img, actualImage, imagePane, getAddedNumber(), '+');
 			}
 			if (e.getSource() == buttons[1]) {
-				filter.doSubtraction();
+				filters.mathMethod(img, actualImage, imagePane, getReducedNumber(), '-');
 			}
 			if (e.getSource() == buttons[2]) {
-				filter.doMultiplication();
+				filters.mathMethod(img, actualImage, imagePane, getMultipliedNumber(), '*');
 			}
 			if (e.getSource() == buttons[3]) {
-				filter.doDivision();
+				filters.mathMethod(img, actualImage, imagePane, getDividedNumber(), '/');
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.getSource() == zoomSlider) {
+				double zoomValue = (double) zoomSlider.getValue() / 100;
+				setActualImage(img.resize(zoomValue, actualImage));
 
-				imageHelper.resize((double) zoomSlider.getValue() / 100);
 				imagePane.setPreferredSize(new Dimension((int) ((double) iWidth * zoomSlider.getValue() / 100),
 						(int) ((double) iHeight * zoomSlider.getValue() / 100)));
 				imagePane.repaint();
 
 			} else if (e.getSource() == brightnessSlider && actualImage != null) {
-				filter.brightness((double) brightnessSlider.getValue() / 100);
+				double brightnessValue = (double) brightnessSlider.getValue() / 100;
+				filters.mathMethod(img, actualImage, imagePane, brightnessValue, 'b');
 				imagePane.repaint();
 
 			} else if (e.getSource() == contrastSlider && actualImage != null) {
-				filter.contrast((double) contrastSlider.getValue() / 100);
+				double contrastValue = (double) contrastSlider.getValue() / 100;
+				filters.mathMethod(img, actualImage, imagePane, contrastValue, 'c');
 				imagePane.repaint();
 			}
 		}
