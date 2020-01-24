@@ -12,7 +12,7 @@ public class Filters {
 				pixel = actualImage.getRaster().getPixel(i, j, new int[4]);
 
 				int gs = (pixel[0] + pixel[1] + pixel[2]) / 3;
-				actualImage.getRaster().setPixels(i, j, 1, 1, new int[] { gs, gs, gs });
+				actualImage.getRaster().setPixels(i, j, 1, 1, new int[] { (int) gs, (int) gs, (int) gs});
 			}
 		}
 		imagePane.repaint();
@@ -44,10 +44,10 @@ public class Filters {
 				newValue = i - number;
 				break;
 			case '*':
-				newValue = i - number;
+				newValue = i * number;
 				break;
 			case '/':
-				newValue = i - number;
+				newValue = i / number;
 				break;
 			case 'b':
 				newValue = i + number * 10;
